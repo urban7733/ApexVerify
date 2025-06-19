@@ -1,0 +1,41 @@
+{
+  "name": "apexverify-ai",
+  "version": "2.0.0",
+  "description": "ApexVerify AI with OpenEvolve Integration - The New Standard for Authenticity in the Creator Economy",
+  "main": "main.py",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "python run_server.py",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "python main.py",
+    "install:all": "pip install -r requirements.txt && cd frontend && npm install",
+    "test": "python -m pytest test_openevolve_integration.py -v",
+    "test:frontend": "cd frontend && npm run test",
+    "lint": "cd frontend && npm run lint",
+    "format": "cd frontend && npm run format"
+  },
+  "keywords": [
+    "deepfake-detection",
+    "ai",
+    "openevolve",
+    "alphaevolve",
+    "self-learning",
+    "creator-economy",
+    "authenticity",
+    "verification"
+  ],
+  "author": "ApexVerify AI Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/urban7733/ApexVerify.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.8"
+  }
+} 

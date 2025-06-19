@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexVerify AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .result-container {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .badge {
+            max-width: 200px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">ApexVerify AI</h1>
+        
+        <!-- File Upload Form -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Upload Media for Analysis</h5>
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <input type="file" class="form-control" id="mediaFile" accept="image/*,video/*" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Analyze</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Analyzing media...</p>
+        </div>
+
+        <!-- Results Container -->
+        <div class="result-container" id="results" style="display: none;">
+            <h3>Analysis Results</h3>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('mediaFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                // Display results
+                const resultContent = document.getElementById('resultContent');
+                resultContent.innerHTML = `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Deepfake Analysis</h5>
+                            <p>Confidence: ${(result.deepfake_confidence * 100).toFixed(2)}%</p>
+                            <p>Is Deepfake: ${result.is_deepfake ? 'Yes' : 'No'}</p>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-title">Face Analysis</div>
+                        <div class="card-body">
+                            <p>Faces Detected: ${result.face_analysis.faces_detected}</p>
+                            <p>Face Quality: ${result.face_analysis.face_quality}</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Reverse Image Search</div>
+                        <div class="card-body">
+                            <p>Similar Images Found: ${result.reverse_search.similar_images_found}</p>
+                            <p>Social Media Matches: ${result.reverse_search.social_media_matches.length}</p>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('results').style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred during analysis');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 
